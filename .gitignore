@@ -1,11 +1,59 @@
-# Example .gitignore
+# --- Python ---
+# Virtual environments
+.venv
+venv/
+*.venv
+env/
+
+# Byte-code and compiled files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.env
-venv/
-.idea/
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- IDEs and Editors ---
 .vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Docker ---
+# Exclude docker-compose logs or other local docker artifacts if any
+# The main docker files are kept, but this prevents local overrides from being committed.
+
+# --- Local Files & Logs ---
 *.log
+*.db
 *.sqlite3
+local_settings.py
+debug.log
+
+# --- OS-specific ---
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
