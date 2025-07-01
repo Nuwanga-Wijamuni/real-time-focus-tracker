@@ -1,0 +1,27 @@
+# This file configures Grafana's dashboard provisioning system.
+# It tells Grafana where to find dashboard definition files (JSON files)
+# and how to load them when it starts up.
+
+# The API version for Grafana's provisioning system.
+apiVersion: 1
+
+# A list of dashboard providers. You can have multiple providers
+# (e.g., one for different teams or projects).
+providers:
+  # The name of this specific provider.
+  - name: 'default-dashboards'
+    # The type of provider. 'file' means Grafana will scan a directory for dashboards.
+    type: file
+    # Disables deletion of dashboards from the UI. It's good practice to manage
+    # provisioned dashboards via files (i.e., through version control).
+    disableDeletion: false
+    # How often Grafana should scan the directory for new or updated dashboards.
+    updateIntervalSeconds: 10
+    # Options specific to the 'file' provider.
+    options:
+      # The path where Grafana should look for dashboard JSON files *inside the container*.
+      # Your docker-compose.yml file will map your local `./monitoring/grafana/provisioning/dashboards`
+      # directory to this path.
+      path: /etc/grafana/provisioning/dashboards
+      # This ensures that dashboards are loaded into a specific folder in the Grafana UI.
+      foldersFromFilesStructure: true
