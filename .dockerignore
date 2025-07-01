@@ -1,0 +1,30 @@
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Python virtual environment
+.venv/
+venv/
+*.venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE and editor configuration
+.vscode/
+.idea/
+
+# Local data and logs
+*.log
+*.db
+*.sqlite3
+
+# Documentation and local files
+README.md
+monitoring/
