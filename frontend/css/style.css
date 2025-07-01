@@ -1,0 +1,40 @@
+/*
+ * This file contains custom CSS to complement the Tailwind CSS framework.
+ * It's used for effects that are more complex than what utility classes
+ * can easily provide, such as the dynamic status indicator light.
+ */
+
+/*
+ * Base styling for the main status text element.
+ * We use a transition to make the color and shadow changes smooth.
+ */
+#status {
+    transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+}
+
+/*
+ * Status: Focused
+ * A calming green color with a subtle glow to indicate focus.
+ */
+.status-focused {
+    color: #2dd4bf; /* Tailwind's teal-400 */
+    text-shadow: 0 0 15px rgba(45, 212, 191, 0.5);
+}
+
+/*
+ * Status: Distracted or Looking Down/Up
+ * A warning yellow/orange color with a matching glow to indicate a lack of focus.
+ */
+.status-distracted {
+    color: #facc15; /* Tailwind's yellow-400 */
+    text-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+}
+
+/*
+ * Default/Connecting Status
+ * A neutral blue color for when the application is starting up or has lost connection.
+ */
+.status-default {
+    color: #38bdf8; /* Tailwind's sky-400 */
+    text-shadow: none;
+}
