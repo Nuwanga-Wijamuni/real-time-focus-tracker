@@ -8,21 +8,19 @@ from prometheus_client import Gauge, Counter
 from app.vision.head_pose import HeadPoseEstimator
 from app.services.focus_analyzer import FocusAnalyzer
 from app.core.config import settings
+from app.core.instrumentation import instrumentator # Import the shared instrumentator
 
 # --- Prometheus Custom Metrics ---
-# Create Gauge metrics to hold the current value of the head pose angles.
-# A Gauge is a metric that represents a single numerical value that can arbitrarily go up and down.
-HEAD_POSE_YAW = Gauge('head_pose_yaw', 'Head pose Yaw angle in degrees')
-HEAD_POSE_PITCH = Gauge('head_pose_pitch', 'Head pose Pitch angle in degrees')
-HEAD_POSE_ROLL = Gauge('head_pose_roll', 'Head pose Roll angle in degrees')
+# This is the key change. We use the instrumentator's "expose" method
+# to create and register our custom metrics. This ensures they are included
+# at the /metrics endpoint.
+HEAD_POSE_YAW = instrumentator.expose(Gauge('head_pose_yaw', 'Head pose Yaw angle in degrees'))
+HEAD_POSE_PITCH = instrumentator.expose(Gauge('head_pose_pitch', 'Head pose Pitch angle in degrees'))
+HEAD_POSE_ROLL = instrumentator.expose(Gauge('head_pose_roll', 'Head pose Roll angle in degrees'))
 
-# Create a Gauge for the focus state. We will use a numeric mapping.
-# This allows us to graph the state over time easily.
-FOCUS_STATE = Gauge('focus_state', 'Current focus state of the user', ['state'])
+FOCUS_STATE = instrumentator.expose(Gauge('focus_state', 'Current focus state of the user', ['state']))
+FOCUS_STATE_SECONDS_TOTAL = instrumentator.expose(Counter('focus_state_seconds_total', 'Total time in seconds for each focus state', ['state']))
 
-# Create a Counter for the total time spent in each state.
-# A Counter is a cumulative metric that represents a single monotonically increasing counter.
-FOCUS_STATE_SECONDS_TOTAL = Counter('focus_state_seconds_total', 'Total time in seconds for each focus state', ['state'])
 
 # Mapping from string state to a numeric value for the gauge
 STATE_MAPPING = {
@@ -78,21 +76,15 @@ async def websocket_endpoint(websocket: WebSocket):
                 HEAD_POSE_PITCH.set(pitch)
                 HEAD_POSE_ROLL.set(roll)
             else:
-                # If no face, set angles to 0 or a default value
                 HEAD_POSE_YAW.set(0)
                 HEAD_POSE_PITCH.set(0)
                 HEAD_POSE_ROLL.set(0)
             
-            # Update the focus state gauge with the numeric value
             numeric_state = STATE_MAPPING.get(focus_state_str, 0)
-            # Set the gauge for the current state to 1, and all others to 0
             for state_name, state_num in STATE_MAPPING.items():
                 FOCUS_STATE.labels(state=state_name).set(1 if state_num == numeric_state else 0)
 
-            # Increment the counter for the current state.
-            # We approximate the time per frame based on the FRAME_RATE.
-            # Assuming FRAME_RATE is 10, each frame is ~0.1 seconds.
-            FOCUS_STATE_SECONDS_TOTAL.labels(state=focus_state_str).inc(1.0 / 10) # Assumes 10 FPS
+            FOCUS_STATE_SECONDS_TOTAL.labels(state=focus_state_str).inc(1.0 / 10)
 
             # --- Prepare and Send Response to Frontend ---
             response_data = {
