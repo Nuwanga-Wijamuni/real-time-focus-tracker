@@ -29,6 +29,10 @@ FROM python:3.9-slim
 # Set the working directory
 WORKDIR /app
 
+# --- FIX: Install OpenCV's runtime dependency ---
+# The libgl1-mesa-glx package provides the missing libGL.so.1 library.
+RUN apt-get update && apt-get install -y libgl1-mesa-glx
+
 # Copy the virtual environment with all the installed dependencies
 # from the 'builder' stage. This is the key to a small final image,
 # as we don't bring along the build tools.
