@@ -8,18 +8,15 @@ from prometheus_client import Gauge, Counter
 from app.vision.head_pose import HeadPoseEstimator
 from app.services.focus_analyzer import FocusAnalyzer
 from app.core.config import settings
-from app.core.instrumentation import instrumentator # Import the shared instrumentator
 
 # --- Prometheus Custom Metrics ---
-# This is the key change. We use the instrumentator's "expose" method
-# to create and register our custom metrics. This ensures they are included
-# at the /metrics endpoint.
-HEAD_POSE_YAW = instrumentator.expose(Gauge('head_pose_yaw', 'Head pose Yaw angle in degrees'))
-HEAD_POSE_PITCH = instrumentator.expose(Gauge('head_pose_pitch', 'Head pose Pitch angle in degrees'))
-HEAD_POSE_ROLL = instrumentator.expose(Gauge('head_pose_roll', 'Head pose Roll angle in degrees'))
+# These are defined correctly and will be picked up by the instrumentator.
+HEAD_POSE_YAW = Gauge('head_pose_yaw', 'Head pose Yaw angle in degrees')
+HEAD_POSE_PITCH = Gauge('head_pose_pitch', 'Head pose Pitch angle in degrees')
+HEAD_POSE_ROLL = Gauge('head_pose_roll', 'Head pose Roll angle in degrees')
 
-FOCUS_STATE = instrumentator.expose(Gauge('focus_state', 'Current focus state of the user', ['state']))
-FOCUS_STATE_SECONDS_TOTAL = instrumentator.expose(Counter('focus_state_seconds_total', 'Total time in seconds for each focus state', ['state']))
+FOCUS_STATE = Gauge('focus_state', 'Current focus state of the user', ['state'])
+FOCUS_STATE_SECONDS_TOTAL = Counter('focus_state_seconds_total', 'Total time in seconds for each focus state', ['state'])
 
 
 # Mapping from string state to a numeric value for the gauge
@@ -84,6 +81,8 @@ async def websocket_endpoint(websocket: WebSocket):
             for state_name, state_num in STATE_MAPPING.items():
                 FOCUS_STATE.labels(state=state_name).set(1 if state_num == numeric_state else 0)
 
+            # *** THIS IS THE FIX ***
+            # Increment the counter for the *actual current state*.
             FOCUS_STATE_SECONDS_TOTAL.labels(state=focus_state_str).inc(1.0 / 10)
 
             # --- Prepare and Send Response to Frontend ---
