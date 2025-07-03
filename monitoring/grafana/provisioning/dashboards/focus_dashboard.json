@@ -42,23 +42,44 @@
           "color": { "mode": "palette-classic" },
           "custom": {
             "drawStyle": "bars",
-            "lineInterpolation": "linear",
+            "lineInterpolation": "stepAfter",
             "barAlignment": 0,
             "lineWidth": 1,
-            "fillOpacity": 80,
+            "fillOpacity": 100,
             "gradientMode": "none",
-            "spanNulls": false,
+            "spanNulls": true,
             "showPoints": "never",
             "axisPlacement": "auto",
-            "axisLabel": "",
-            "scaleDistribution": { "type": "linear" },
-            "hideFrom": { "tooltip": false, "viz": false, "legend": false },
-            "stacking": { "mode": "normal", "group": "A" }
-          },
-          "mappings": [],
-          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+            "stacking": { "mode": "normal", "group": "A" },
+            "hideFrom": { "tooltip": false, "viz": false, "legend": false }
+          }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"Focused\"}" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#73bf69" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"Distracted - Looking Right\"}" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#f2cc0c" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"Distracted - Looking Left\"}" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#f2cc0c" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"Looking Down\"}" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#e5ac0e" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"Distracted - Looking Up\"}" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#e5ac0e" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"No Face Detected\"}" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "#f2495c" } }]
+          }
+        ]
       }
     },
     {
@@ -76,7 +97,6 @@
         }
       ],
       "options": {
-        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
         "pieType": "pie",
         "displayLabels": ["name", "percent"],
         "legend": { "displayMode": "list", "placement": "right" }
@@ -107,7 +127,7 @@
           "refId": "C"
         }
       ],
-      "fieldConfig": { "defaults": { "unit": "degree" } }
+      "fieldConfig": { "defaults": { "unit": "degree", "color": {"mode":"palette-classic"}, "custom": {"lineWidth": 2, "fillOpacity": 10} } }
     },
     {
       "gridPos": { "h": 9, "w": 12, "x": 0, "y": 17 },
@@ -117,12 +137,12 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "sum(rate(http_requests_total{job=\"fastapi-app\"}[1m])) by (status_code)",
-          "legendFormat": "Status {{status_code}}",
+          "expr": "sum(rate(http_requests_total{job=\"fastapi-app\"}[1m]))",
+          "legendFormat": "Requests/sec",
           "refId": "A"
         }
       ],
-      "fieldConfig": { "defaults": { "unit": "reqps" } }
+      "fieldConfig": { "defaults": { "unit": "reqps", "color": {"mode":"palette-classic"}, "custom": {"lineWidth": 2, "fillOpacity": 20} } }
     },
     {
       "gridPos": { "h": 9, "w": 12, "x": 12, "y": 17 },
@@ -137,7 +157,7 @@
           "refId": "A"
         }
       ],
-      "fieldConfig": { "defaults": { "unit": "s" } }
+      "fieldConfig": { "defaults": { "unit": "s", "color": {"mode":"palette-classic"}, "custom": {"lineWidth": 2, "fillOpacity": 10} } }
     }
   ],
   "refresh": "5s",
@@ -150,5 +170,5 @@
   "timezone": "browser",
   "title": "AI Focus & Attention Tracker",
   "uid": "ai-focus-tracker-dashboard",
-  "version": 2
+  "version": 8
 }
