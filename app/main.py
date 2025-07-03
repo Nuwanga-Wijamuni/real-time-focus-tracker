@@ -12,16 +12,6 @@ app = FastAPI(
     version=settings.PROJECT_VERSION
 )
 
-# --- Setup Monitoring ---
-# This is the correct way to instrument the app.
-# It's done at startup to avoid the "middleware after application has started" error.
-@app.on_event("startup")
-async def startup():
-    # The instrumentator will automatically discover and expose the custom metrics
-    # defined in other modules (like tracking.py).
-    Instrumentator().instrument(app).expose(app)
-
-
 # --- CORS Middleware ---
 # This must be added before including routers.
 app.add_middleware(
@@ -35,7 +25,17 @@ app.add_middleware(
 # --- Include API Routers ---
 app.include_router(tracking.router, prefix=settings.API_V1_STR)
 
+# --- Setup Monitoring ---
+# This is the corrected, simplified setup.
+# This instruments the app and exposes the /metrics endpoint.
+# It will automatically discover the custom metrics created in tracking.py.
+Instrumentator().instrument(app).expose(app)
+
+
 # --- Root Endpoint ---
 @app.get("/", tags=["Root"])
 async def read_root():
+    """
+    A simple root endpoint to confirm the API is running.
+    """
     return {"message": f"Welcome to the {settings.PROJECT_NAME}!"}

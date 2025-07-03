@@ -1,0 +1,17 @@
+# Global configurations for Prometheus
+global:
+  scrape_interval: 15s # How often to scrape targets. 15 seconds is a good default.
+  evaluation_interval: 15s # How often to evaluate rules (e.g., for alerting).
+
+# A list of scrape configurations. Each configuration defines a set of targets
+# and parameters for how to scrape them.
+scrape_configs:
+  # Job 1: Scrape metrics from the FastAPI application itself.
+  - job_name: 'fastapi-app'
+
+    # This tells Prometheus to use the DNS resolver within Docker's network
+    # to find the service named 'app'. The port '8000' must match the port
+    # your application is running on inside the container.
+    # Docker Compose will make the 'app' service discoverable by this name.
+    static_configs:
+      - targets: ['app:8000']

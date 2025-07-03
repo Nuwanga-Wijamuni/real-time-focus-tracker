@@ -10,27 +10,12 @@ from app.services.focus_analyzer import FocusAnalyzer
 from app.core.config import settings
 
 # --- Prometheus Custom Metrics ---
-# This is the standard and correct way to define custom metrics.
-# They are created here and will be automatically picked up by the instrumentator.
 HEAD_POSE_YAW = Gauge('head_pose_yaw', 'Head pose Yaw angle in degrees')
 HEAD_POSE_PITCH = Gauge('head_pose_pitch', 'Head pose Pitch angle in degrees')
 HEAD_POSE_ROLL = Gauge('head_pose_roll', 'Head pose Roll angle in degrees')
 
-# A Gauge to represent the current state as a number. This is for the state timeline.
 FOCUS_STATE = Gauge('focus_state', 'Current focus state of the user (numeric)')
-
-# A Counter to track the total time in each state. This is for the pie chart.
 FOCUS_STATE_SECONDS_TOTAL = Counter('focus_state_seconds_total', 'Total time in seconds for each focus state', ['state'])
-
-# Mapping from string state to a numeric value for the gauge
-STATE_MAPPING = {
-    "No Face Detected": 0,
-    "Focused": 1,
-    "Distracted - Looking Left": 2,
-    "Distracted - Looking Right": 3,
-    "Looking Down": 4,
-    "Distracted - Looking Up": 5
-}
 
 # Create an API router for this endpoint
 router = APIRouter()
@@ -80,11 +65,9 @@ async def websocket_endpoint(websocket: WebSocket):
                 HEAD_POSE_PITCH.set(0)
                 HEAD_POSE_ROLL.set(0)
             
-            # Set the numeric value for the current state gauge
-            numeric_state = STATE_MAPPING.get(focus_state_str, 0)
+            numeric_state = focus_analyzer.STATE_MAPPING.get(focus_state_str, 0)
             FOCUS_STATE.set(numeric_state)
 
-            # Increment the counter for the current state.
             FOCUS_STATE_SECONDS_TOTAL.labels(state=focus_state_str).inc(1.0 / 10)
 
             # --- Prepare and Send Response to Frontend ---

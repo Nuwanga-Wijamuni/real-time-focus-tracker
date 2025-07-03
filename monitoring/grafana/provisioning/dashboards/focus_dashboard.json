@@ -28,59 +28,34 @@
       "gridPos": { "h": 8, "w": 18, "x": 0, "y": 0 },
       "id": 1,
       "title": "Focus State Over Time",
-      "type": "timeseries",
+      "type": "statetimeline",
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "focus_state{job=\"fastapi-app\"}",
-          "legendFormat": "{{state}}",
+          "legendFormat": "State",
           "refId": "A"
         }
       ],
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
-          "custom": {
-            "drawStyle": "bars",
-            "lineInterpolation": "stepAfter",
-            "barAlignment": 0,
-            "lineWidth": 1,
-            "fillOpacity": 100,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "showPoints": "never",
-            "axisPlacement": "auto",
-            "stacking": { "mode": "normal", "group": "A" },
-            "hideFrom": { "tooltip": false, "viz": false, "legend": false }
-          }
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"Focused\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#73bf69" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"Distracted - Looking Right\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#f2cc0c" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"Distracted - Looking Left\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#f2cc0c" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"Looking Down\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#e5ac0e" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"Distracted - Looking Up\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#e5ac0e" } }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "focus_state{job=\"fastapi-app\", state=\"No Face Detected\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#f2495c" } }]
-          }
-        ]
-      }
+          "mappings": [
+            {
+              "options": {
+                "0": { "color": "#f2495c", "text": "No Face Detected" },
+                "1": { "color": "#73bf69", "text": "Focused" },
+                "2": { "color": "#f2cc0c", "text": "Looking Left" },
+                "3": { "color": "#f2cc0c", "text": "Looking Right" },
+                "4": { "color": "#e5ac0e", "text": "Looking Down" },
+                "5": { "color": "#e5ac0e", "text": "Looking Up" }
+              },
+              "type": "value"
+            }
+          ]
+        }
+      },
+      "options": { "showValue": "auto", "mergeValues": true }
     },
     {
       "gridPos": { "h": 8, "w": 6, "x": 18, "y": 0 },
@@ -170,5 +145,5 @@
   "timezone": "browser",
   "title": "AI Focus & Attention Tracker",
   "uid": "ai-focus-tracker-dashboard",
-  "version": 8
+  "version": 13
 }
