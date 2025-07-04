@@ -1,9 +1,6 @@
 class FocusAnalyzer:
     """
     Analyzes head pose angles to determine the user's focus state.
-
-    This class uses a rule-based system to classify attention based on yaw, pitch,
-    and roll values. The thresholds for these rules can be easily tuned.
     """
 
     # This mapping is now part of the class, making it accessible to other files.
@@ -43,5 +40,6 @@ class FocusAnalyzer:
             return "Looking Down"
         else:
             return "Focused"
+
 
 

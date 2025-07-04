@@ -18,9 +18,6 @@ services:
       - ./monitoring/prometheus:/etc/prometheus/
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
 
   grafana_dashboard:
     image: grafana/grafana:11.1.0
@@ -28,14 +25,12 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      # THIS IS THE FIX: We are pointing Grafana to a new, fresh volume.
-      - grafana-storage-v2:/var/lib/grafana
+      - grafana-storage:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
 
-# THIS IS THE FIX: We define the new, fresh volume here.
 volumes:
-  grafana-storage-v2: {}
+  grafana-storage: {}
