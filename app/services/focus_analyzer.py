@@ -1,12 +1,9 @@
 class FocusAnalyzer:
     """
     Analyzes head pose angles to determine the user's focus state.
-
-    This class uses a rule-based system to classify attention based on yaw, pitch,
-    and roll values. The thresholds for these rules can be easily tuned.
     """
 
-    # Mapping from string state to a numeric value for the gauge
+    # This mapping is now part of the class, making it accessible to other files.
     STATE_MAPPING = {
         "No Face Detected": 0,
         "Focused": 1,
@@ -19,14 +16,6 @@ class FocusAnalyzer:
     def __init__(self, yaw_threshold=20, pitch_threshold_pos=20, pitch_threshold_neg=-15):
         """
         Initializes the FocusAnalyzer with customizable thresholds.
-
-        Args:
-            yaw_threshold (int): The angle (in degrees) for left/right head turns
-                                 to be considered a distraction.
-            pitch_threshold_pos (int): The angle (in degrees) for looking up to be
-                                       considered a distraction.
-            pitch_threshold_neg (int): The angle (in degrees) for looking down to be
-                                       considered a distraction.
         """
         self.yaw_threshold = yaw_threshold
         self.pitch_threshold_pos = pitch_threshold_pos
@@ -35,12 +24,6 @@ class FocusAnalyzer:
     def analyze_focus(self, angles):
         """
         Classifies the focus state based on the provided head pose angles.
-
-        Args:
-            angles (tuple): A tuple containing (yaw, pitch, roll) in degrees.
-
-        Returns:
-            str: A string describing the user's focus state.
         """
         if angles is None:
             return "No Face Detected"
@@ -57,3 +40,6 @@ class FocusAnalyzer:
             return "Looking Down"
         else:
             return "Focused"
+
+
+

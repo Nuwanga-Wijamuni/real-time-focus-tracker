@@ -1,74 +1,36 @@
-# Specifies the version of the Docker Compose file format. Version 3.8 is modern and widely supported.
 version: '3.8'
 
-# Defines the individual services (containers) that make up your application stack.
 services:
-  
-  # 1. The FastAPI Application Service
   app:
-    # Tells Docker Compose to build an image from the Dockerfile in the current directory ('.').
     build: .
-    # Names the container for easier identification.
     container_name: focus_tracker_app
-    # Maps port 8000 on the host machine to port 8000 inside the container.
-    # This is how you access your FastAPI application from your browser.
     ports:
       - "8000:8000"
-    # Connects this service to our custom network, allowing it to communicate with other services.
-    networks:
-      - monitoring-net
-    # Optional: Mounts the local 'app' directory into the container's '/app/app' directory.
-    # This is useful for development as it allows for live code reloading without rebuilding the image.
-    # For production, you might remove this to use the code baked into the image.
     volumes:
       - ./app:/app/app
 
-  # 2. The Prometheus Monitoring Service
-  prometheus:
-    # Uses the official Prometheus image from Docker Hub.
+  prometheus_server:
     image: prom/prometheus:v2.53.0
-    # Names the container.
     container_name: prometheus_server
-    # Maps port 9090 for accessing the Prometheus UI.
     ports:
       - "9090:9090"
-    # Mounts your local prometheus.yml configuration file into the container.
-    # This is how Prometheus knows what targets to scrape (i.e., your 'app' service).
     volumes:
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    # Specifies the command to start Prometheus with your configuration file.
+      - ./monitoring/prometheus:/etc/prometheus/
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
-    # Connects to the custom network.
-    networks:
-      - monitoring-net
-    # Ensures that the 'app' service is started before Prometheus starts.
-    # This prevents Prometheus from trying to scrape a target that doesn't exist yet.
-    depends_on:
-      - app
 
-  # 3. The Grafana Visualization Service
-  grafana:
-    # Uses the official Grafana image.
+  grafana_dashboard:
     image: grafana/grafana:11.1.0
-    # Names the container.
     container_name: grafana_dashboard
-    # Maps port 3000 for accessing the Grafana UI.
     ports:
       - "3000:3000"
-    # Mounts the entire Grafana provisioning directory into the container.
-    # This is how Grafana automatically loads your dashboard and data source configurations on startup.
     volumes:
-      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/
-    # Connects to the custom network.
-    networks:
-      - monitoring-net
-    # Ensures that Prometheus is running before Grafana starts, as Grafana depends on it as a data source.
-    depends_on:
-      - prometheus
+      - grafana-storage:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
 
-# Defines the custom network that all services will share.
-networks:
-  monitoring-net:
-    # Uses the default 'bridge' driver, which is standard for single-host Docker setups.
-    driver: bridge
+volumes:
+  grafana-storage: {}
