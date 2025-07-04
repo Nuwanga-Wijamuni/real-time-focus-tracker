@@ -6,7 +6,9 @@ class FocusAnalyzer:
     and roll values. The thresholds for these rules can be easily tuned.
     """
 
-    # Mapping from string state to a numeric value for the gauge
+    # THIS IS THE FIX:
+    # The STATE_MAPPING dictionary is now part of the class, making it
+    # accessible to other files that import and use this class.
     STATE_MAPPING = {
         "No Face Detected": 0,
         "Focused": 1,
