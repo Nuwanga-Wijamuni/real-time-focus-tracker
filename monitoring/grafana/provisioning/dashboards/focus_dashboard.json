@@ -33,7 +33,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "focus_state{job=\"fastapi-app\"}",
-          "legendFormat": "{{state}}",
+          "legendFormat": "State",
           "refId": "A"
         }
       ],
@@ -41,45 +41,26 @@
         "defaults": {
           "color": { "mode": "palette-classic" },
           "custom": {
-            "drawStyle": "bars",
+            "drawStyle": "line",
             "lineInterpolation": "stepAfter",
-            "barAlignment": 0,
-            "lineWidth": 1,
-            "fillOpacity": 100,
-            "gradientMode": "none",
-            "spanNulls": true,
-            "showPoints": "never",
-            "axisPlacement": "auto",
-            "stacking": { "mode": "normal", "group": "A" },
-            "hideFrom": { "tooltip": false, "viz": false, "legend": false }
-          }
-        },
-        "overrides": [
-          {
-            "matcher": { "id": "byName", "options": "focus_state{state=\"Focused\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#73bf69" } }, { "id": "displayName", "value": "Focused" }]
+            "lineWidth": 2,
+            "fillOpacity": 25,
+            "spanNulls": false
           },
-          {
-            "matcher": { "id": "byName", "options": "focus_state{state=\"Distracted - Looking Right\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#f2cc0c" } }, { "id": "displayName", "value": "Looking Right" }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "focus_state{state=\"Distracted - Looking Left\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#f2cc0c" } }, { "id": "displayName", "value": "Looking Left" }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "focus_state{state=\"Looking Down\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#e5ac0e" } }, { "id": "displayName", "value": "Looking Down" }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "focus_state{state=\"Distracted - Looking Up\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#e5ac0e" } }, { "id": "displayName", "value": "Looking Up" }]
-          },
-          {
-            "matcher": { "id": "byName", "options": "focus_state{state=\"No Face Detected\"}" },
-            "properties": [{ "id": "color", "value": { "fixedColor": "#f2495c" } }, { "id": "displayName", "value": "No Face" }]
-          }
-        ]
+          "mappings": [
+            {
+              "options": {
+                "0": { "color": "#f2495c", "text": "No Face Detected" },
+                "1": { "color": "#73bf69", "text": "Focused" },
+                "2": { "color": "#f2cc0c", "text": "Looking Left" },
+                "3": { "color": "#f2cc0c", "text": "Looking Right" },
+                "4": { "color": "#e5ac0e", "text": "Looking Down" },
+                "5": { "color": "#e5ac0e", "text": "Looking Up" }
+              },
+              "type": "value"
+            }
+          ]
+        }
       }
     },
     {
@@ -128,20 +109,6 @@
         }
       ],
       "fieldConfig": { "defaults": { "unit": "degree", "color": {"mode":"palette-classic"}, "custom": {"lineWidth": 2, "fillOpacity": 10} } }
-    },
-    {
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 17 },
-      "id": 6,
-      "title": "Raw Focus State Data (for Debugging)",
-      "type": "table",
-      "targets": [
-        {
-          "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "focus_state_seconds_total{job=\"fastapi-app\"}",
-          "legendFormat": "{{state}}",
-          "refId": "A"
-        }
-      ]
     }
   ],
   "refresh": "5s",
@@ -154,5 +121,5 @@
   "timezone": "browser",
   "title": "AI Focus & Attention Tracker",
   "uid": "ai-focus-tracker-dashboard",
-  "version": 16
+  "version": 33
 }

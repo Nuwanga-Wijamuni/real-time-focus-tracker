@@ -26,9 +26,8 @@ app.add_middleware(
 app.include_router(tracking.router, prefix=settings.API_V1_STR)
 
 # --- Setup Monitoring ---
-# This is the corrected, simplified setup.
-# This instruments the app and exposes the /metrics endpoint.
-# It will automatically discover the custom metrics created in tracking.py.
+# THIS IS THE CORRECT ORDER: This must be the LAST thing you do to the app object.
+# It instruments the app and exposes the /metrics endpoint.
 Instrumentator().instrument(app).expose(app)
 
 
